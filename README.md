@@ -1,128 +1,178 @@
-
 # 🧠 Simple CNN from Scratch (NumPy)
 
-This project demonstrates how to build and train a **Convolutional Neural Network (CNN)** entirely from scratch using **NumPy**, without using any deep learning frameworks like TensorFlow or PyTorch. It trains a small CNN on the **MNIST handwritten digit dataset** (28×28 grayscale images).
+This project demonstrates how to build and train a **Convolutional
+Neural Network (CNN)** entirely from scratch using **NumPy**, without
+using any deep learning frameworks like TensorFlow or PyTorch.\
+It trains a small CNN on the **MNIST handwritten digit dataset** (28×28
+grayscale images).
 
----
+------------------------------------------------------------------------
 
 ## 📘 Overview
 
-This project helps you understand the **core building blocks** of a CNN, including:
+This project helps you understand the **core building blocks** of a CNN,
+including:
 
-- Convolutional layers
-- Max Pooling layers
-- Softmax output layers
-- Forward and backward propagation (gradient updates)
-- Loss and accuracy computation
+-   Convolutional layers (3×3 filters)
+-   Max Pooling layers (2×2)
+-   Softmax output layer (10 classes)
+-   Manual forward and backward propagation
+-   Gradient updates via simple stochastic gradient descent (SGD)
 
-It’s a great resource for those who want to see **how CNNs really work under the hood** — every operation is manually coded in NumPy!
+Everything --- from convolution to backpropagation --- is implemented
+manually in **pure NumPy**, so you can see *exactly how CNNs learn*
+under the hood.
 
----
+------------------------------------------------------------------------
 
 ## 🧩 Architecture
 
-```mermaid
+``` mermaid
 graph TD
-    A["Input Image (28x28)"] --> B["Conv3x3 Layer (8 Filters)"]
-    B --> C["MaxPool2 Layer (2x2)"]
-    C --> D["Flatten"]
-    D --> E["Softmax Layer (10 Classes)"]
-    E --> F["Output Probabilities"]
-
+    A["Input Image (28×28)"] --> B["Conv3x3 Layer (8 Filters)"]
+    B --> C["ReLU Activation"]
+    C --> D["MaxPool2 Layer (2×2)"]
+    D --> E["Flatten"]
+    E --> F["Softmax Layer (10 Classes)"]
+    F --> G["Output Probabilities"]
 ```
 
 ### Layer Details
 
-| Layer | Parameters | Output Shape | Description |
-|--------|-------------|--------------|--------------|
-| Conv3x3 | 8 filters (3x3) | 8 × 26 × 26 | Extracts local features |
-| MaxPool2 | 2×2 | 8 × 13 × 13 | Reduces spatial dimensions |
-| Softmax | Input: 1352 | 10 classes | Produces class probabilities |
+  ------------------------------------------------------------------------
+  Layer       Parameters         Output Shape         Description
+  ----------- ------------------ -------------------- --------------------
+  Conv3x3     8 filters (3×3)    8 × 26 × 26          Extracts local
+                                                      spatial features
 
----
+  ReLU        \-                 8 × 26 × 26          Adds non-linearity
+
+  MaxPool2    2×2                8 × 13 × 13          Reduces spatial
+                                                      dimensions
+
+  Flatten     \-                 1352                 Converts 3D tensor →
+                                                      1D vector
+
+  Softmax     Input: 1352,       (10,)                Produces class
+              Output: 10                              probabilities
+  ------------------------------------------------------------------------
+
+------------------------------------------------------------------------
 
 ## ⚙️ Forward & Backward Pass Cycle
 
-```mermaid
+``` mermaid
 sequenceDiagram
     participant Input
     participant Conv3x3
+    participant ReLU
     participant MaxPool2
     participant Softmax
     participant Loss
 
-    Input->>Conv3x3: Forward pass (feature extraction)
-    Conv3x3->>MaxPool2: Pass convolved feature maps
+    Input->>Conv3x3: Forward (convolution)
+    Conv3x3->>ReLU: Apply activation
+    ReLU->>MaxPool2: Downsample (2×2)
     MaxPool2->>Softmax: Flatten + feed forward
     Softmax->>Loss: Compute cross-entropy loss
     Loss-->>Softmax: Backpropagate error
-    Softmax-->>MaxPool2: Gradient wrt input
-    MaxPool2-->>Conv3x3: Gradient wrt feature maps
-    Conv3x3-->>Input: Update filters (gradient descent)
-
+    Softmax-->>MaxPool2: Gradients wrt input
+    MaxPool2-->>ReLU: Pass gradients through mask
+    ReLU-->>Conv3x3: Update filters (SGD)
 ```
 
----
+------------------------------------------------------------------------
 
 ## 🧠 Training Flow
 
-1. **Download MNIST** dataset (automatically handled via `urllib`).
-2. Initialize layers: `Conv3x3`, `MaxPool2`, and `Softmax`.
-3. For each training image:
-   - Perform a forward pass.
-   - Compute loss and accuracy.
-   - Backpropagate gradients and update weights.
-4. Track and plot training loss over steps.
+1.  **Load MNIST dataset** (automatically from TensorFlow or NumPy).\
+2.  Initialize layers: `Conv3x3`, `MaxPool2`, `Softmax`.
+3.  For each image:
+    -   Forward pass → compute prediction
+    -   Compute loss and accuracy
+    -   Backward pass → update weights
+4.  Plot training loss after every few hundred steps.
 
+Example logs:
 
-## 📈 Example Output
+    Epoch 1/3
+    [Step 100] Avg Loss=2.18 | Accuracy=45%
+    [Step 200] Avg Loss=2.01 | Accuracy=62%
+    [Step 300] Avg Loss=1.65 | Accuracy=70%
 
-```
-Training CNN...
-[Step 100] Avg Loss=1.942 | Accuracy=38.0%
-[Step 200] Avg Loss=1.681 | Accuracy=45.0%
-[Step 300] Avg Loss=1.507 | Accuracy=48.0%
-...
-```
+------------------------------------------------------------------------
 
-A **loss curve** will also be displayed after training:
+## 📈 Training Loss Curve
 
-📉 *Training Loss vs Steps*
+At the end of training, a plot will automatically show **training loss
+vs. steps**.\
+A downward trend indicates that the model is learning correctly.
 
----
+------------------------------------------------------------------------
 
 ## 🧮 Key Math Concepts
 
-| Concept | Formula | Meaning |
-|----------|----------|----------|
-| Convolution | \( (I * K)(x, y) = \sum_{i,j} I(x+i, y+j) K(i,j) \) | Slides kernel over image |
-| Max Pooling | \( P_{i,j} = \max(R_{i,j}) \) | Reduces dimensionality |
-| Softmax | \( S_i = e^{z_i} / \sum_j e^{z_j} \) | Converts logits to probabilities |
-| Cross-Entropy Loss | \( L = -\log(p_{true}) \) | Penalizes wrong predictions |
+  ----------------------------------------------------------------------------------------
+  Concept                 Formula                                  Meaning
+  ----------------------- ---------------------------------------- -----------------------
+  **Convolution**         ( (I \* K)(x, y) =                       Slides 3×3 filter
+                          `\sum`{=tex}*{i=0}\^{2}                  across the image
+                          `\sum`{=tex}*{j=0}\^{2} I\_{x+i, y+j}    
+                          K\_{i,j} )                               
 
----
+  **ReLU Activation**     ( f(x) = `\max`{=tex}(0, x) )            Introduces
+                                                                   non-linearity
+
+  **Max Pooling**         ( P\_{i,j} = `\max`{=tex}*{(m,n)         Downsamples spatial
+                          `\in `{=tex}R*{i,j}} X\_{m,n} )          regions
+
+  **Softmax**             ( S_i =                                  Converts logits to
+                          `\frac{e^{z_i}}{\sum_j e^{z_j}}`{=tex} ) probabilities
+
+  **Cross-Entropy Loss**  ( L = -`\log`{=tex}(p\_{true}) )         Penalizes incorrect
+                                                                   predictions
+  ----------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
 
 ## 🧰 Dependencies
 
-- Python 3.8+
-- NumPy
-- Matplotlib
-- Pandas (optional for data manipulation)
+-   Python 3.8+
+-   NumPy
+-   Matplotlib
+-   TensorFlow *(only used to fetch MNIST)*
 
 Install dependencies:
 
-```bash
-pip install numpy matplotlib pandas
+``` bash
+pip install numpy matplotlib tensorflow
 ```
 
----
+If you want to make it **framework-free**, replace TensorFlow loading
+with:
+
+``` python
+from sklearn.datasets import fetch_openml
+```
+
+------------------------------------------------------------------------
 
 ## 🧪 Experiment Ideas
 
-Try modifying these for deeper understanding:
+-   🔢 Change number of filters (8 → 16 or 32)
+-   🔁 Train for more epochs (3--5)
+-   ⚙️ Adjust learning rate (0.005 → 0.01)
+-   🧩 Add extra convolutional layers
+-   🔄 Compare performance with a Keras CNN
 
-- Change number of filters in Conv3x3
-- Add more convolutional layers
-- Use different activation functions
-- Implement batch training
-- Compare accuracy with Keras MNIST CNN
+------------------------------------------------------------------------
+
+## 🏁 Results Summary
+
+  Metric              Value (after 3 epochs, 3000 samples)
+  ------------------- --------------------------------------
+  Training Accuracy   \~70--75%
+  Test Accuracy       \~65--70%
+  Loss Trend          Decreasing steadily
+
+------------------------------------------------------------------------
