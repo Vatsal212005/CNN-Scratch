@@ -23,11 +23,12 @@ It’s a great resource for those who want to see **how CNNs really work under t
 
 ```mermaid
 graph TD
-    A[Input Image (28x28)] --> B[Conv3x3 Layer (8 Filters)]
-    B --> C[MaxPool2 Layer (2x2)]
-    C --> D[Flatten]
-    D --> E[Softmax Layer (10 Classes)]
-    E --> F[Output Probabilities]
+    A["Input Image (28x28)"] --> B["Conv3x3 Layer (8 Filters)"]
+    B --> C["MaxPool2 Layer (2x2)"]
+    C --> D["Flatten"]
+    D --> E["Softmax Layer (10 Classes)"]
+    E --> F["Output Probabilities"]
+
 ```
 
 ### Layer Details
@@ -58,6 +59,7 @@ sequenceDiagram
     Softmax-->>MaxPool2: Gradient wrt input
     MaxPool2-->>Conv3x3: Gradient wrt feature maps
     Conv3x3-->>Input: Update filters (gradient descent)
+
 ```
 
 ---
