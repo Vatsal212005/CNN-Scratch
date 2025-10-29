@@ -109,29 +109,57 @@ vs. steps**.\
 A downward trend indicates that the model is learning correctly.
 
 ------------------------------------------------------------------------
+# 🧮 Key Math Concepts
 
-## 🧮 Key Math Concepts
+### 🧩 Convolution
 
-  ----------------------------------------------------------------------------------------
-  Concept                 Formula                                  Meaning
-  ----------------------- ---------------------------------------- -----------------------
-  **Convolution**         ( (I \* K)(x, y) =                       Slides 3×3 filter
-                          `\sum`{=tex}*{i=0}\^{2}                  across the image
-                          `\sum`{=tex}*{j=0}\^{2} I\_{x+i, y+j}    
-                          K\_{i,j} )                               
+``` math
+(I * K)(x, y) = \sum_{i=0}^{2}\sum_{j=0}^{2} I_{x+i,\,y+j} \, K_{i,j}
+```
 
-  **ReLU Activation**     ( f(x) = `\max`{=tex}(0, x) )            Introduces
-                                                                   non-linearity
+Slides a 3×3 kernel (filter) across the input image to extract local
+features.
 
-  **Max Pooling**         ( P\_{i,j} = `\max`{=tex}*{(m,n)         Downsamples spatial
-                          `\in `{=tex}R*{i,j}} X\_{m,n} )          regions
+------------------------------------------------------------------------
 
-  **Softmax**             ( S_i =                                  Converts logits to
-                          `\frac{e^{z_i}}{\sum_j e^{z_j}}`{=tex} ) probabilities
+### ⚡ ReLU Activation
 
-  **Cross-Entropy Loss**  ( L = -`\log`{=tex}(p\_{true}) )         Penalizes incorrect
-                                                                   predictions
-  ----------------------------------------------------------------------------------------
+``` math
+f(x) = \max(0, x)
+```
+
+Applies non-linearity by zeroing out negative values.
+
+------------------------------------------------------------------------
+
+### 🌀 Max Pooling
+
+``` math
+P_{i,j} = \max_{(m,n)\,\in\,R_{i,j}} X_{m,n}
+```
+
+Downsamples feature maps by taking the maximum value in each 2×2 region.
+
+------------------------------------------------------------------------
+
+### 🔢 Softmax
+
+``` math
+S_i = rac{e^{z_i}}{\sum_j e^{z_j}}
+```
+
+Converts logits into normalized probabilities for each class.
+
+------------------------------------------------------------------------
+
+### 📉 Cross-Entropy Loss
+
+``` math
+L = -\log(p_{   ext{true}})
+```
+
+Measures how far predicted probabilities are from the true class.
+
 
 ------------------------------------------------------------------------
 
