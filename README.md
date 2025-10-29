@@ -167,12 +167,3 @@ from sklearn.datasets import fetch_openml
 
 ------------------------------------------------------------------------
 
-## 🏁 Results Summary
-
-  Metric              Value (after 3 epochs, 3000 samples)
-  ------------------- --------------------------------------
-  Training Accuracy   \~70--75%
-  Test Accuracy       \~65--70%
-  Loss Trend          Decreasing steadily
-
-------------------------------------------------------------------------
